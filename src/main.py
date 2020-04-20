@@ -2,7 +2,7 @@
 # NIM	: 13518036
 # Hal   : Tugas Kecil 4 - Strategi Algoritma "15-Puzzle"
 # Judul	: Ekstraksi Informasi dari Artikel Berita dengan Algoritma Pencocokan String
-
+import re
 
 def kmpMatch(text, pattern):
 	n = len(text)
@@ -46,14 +46,16 @@ def computeFail(pattern):
 	return fail
 	
 def mainKMP(args):
-	args[0] = str(input("Text: "))
-	args[1] = str(input("Pattern: "))
-	
+	args[0] = str(input("Nama File: "))
+	args[1] = str(input("Keyword: "))
+	File = open(args[0], "r")
+	text = File.read()
 	posn = kmpMatch(args[0], args[1])
 	if (posn == - 1):
-		print("Pattern not found")
+		print("Keyword not found")
 	else:
-		print("Pattern starts at posn " + str(posn))
+		#print("Pattern starts at posn " + str(posn))
+		kal = kalimatRegex(text, args[1], args[0])
 
 def bmMatch(text, pattern):
 	last = []
@@ -92,16 +94,35 @@ def buildLast(pattern):
 	return last
 		
 def mainBM(args):
-	args[0] = str(input("Text: "))
-	args[1] = str(input("Pattern: "))
-	
-	posn = bmMatch(args[0], args[1])
+	args[0] = str(input("Nama File: "))
+	args[1] = str(input("Keyword: "))
+	File = open(args[0], "r")
+	text = File.read()
+	posn = bmMatch(text, args[1])
 	if (posn == -1):
-		print("Pattern not found")
+		print("Keyword not found")
 	else:
-		print("Pattern starts at posn " + str(posn))
-			
-		
+		#print("Pattern starts at posn " + str(posn))
+		kalimat = kalimatRegex(text, args[1], args[0])
+		jumlahRegex(text, kal)
+
+#def jumlahRegex(text, kal):
+#	x = len(kal)
+#	for i in range(x):
+#		jumlah_regex = re.compile(r'
+
+#def waktuRegex(text, kal):
+#	x = len(kal)
+#	for i in range(x):
+#		waktu_regex = re.compile(r'
+					
+def kalimatRegex(text, pattern, filename):
+	kalimat_regex = re.compile(r'(?:^|[\.\n] )(.*?' + pattern + r'.*?)(?=[\.\n])', re.I)
+	kal = kalimat_regex.findall(text)
+	#print(kal[0] + '.' + " (" + str(filename) + ")")
+	#print(kal[1] + '.' + " (" + str(filename) + ")")
+	return kal
+	
 #Main Program
 args = [0 for args in range(2)]
 #mainKMP(args)
