@@ -46,9 +46,6 @@ def computeFail(pattern):
 	return fail
 	
 def mainKMP(args):
-	if (len(args) != 2):
-		print("Usage: python KMPSearch")
-		
 	args[0] = str(input("Text: "))
 	args[1] = str(input("Pattern: "))
 	
@@ -57,8 +54,55 @@ def mainKMP(args):
 		print("Pattern not found")
 	else:
 		print("Pattern starts at posn " + str(posn))
+
+def bmMatch(text, pattern):
+	last = []
+	last = buildLast(pattern)
+	n = len(text)
+	m = len(pattern)
+	i = m - 1
+	
+	if (i > n-1):
+		return -1 #tidak match jika pattern lebih panjang dari text
+	
+	j = m-1
+	while (i <= n-1):
+		if (pattern[j] == text[i]):
+			if (j == 0):
+				return i #cocok
+			else: #looking-glass technique
+				i -= 1
+				j -= 1
+		else: #character jump technique
+			lo = last[ord(text[i])] #last occ
+			i = i + m - min(j, 1+lo)
+			j = m - 1
+			
+		if (i > n-1):
+			break
+	
+	return -1 #tidak ada yang cocok
+	
+def buildLast(pattern):
+	last = [-1 for last in range(128)]
+
+	for i in range (len(pattern)):
+		last[ord(pattern[i])] = i
+	
+	return last
 		
+def mainBM(args):
+	args[0] = str(input("Text: "))
+	args[1] = str(input("Pattern: "))
+	
+	posn = bmMatch(args[0], args[1])
+	if (posn == -1):
+		print("Pattern not found")
+	else:
+		print("Pattern starts at posn " + str(posn))
+			
 		
 #Main Program
 args = [0 for args in range(2)]
-mainKMP(args)
+#mainKMP(args)
+mainBM(args)
