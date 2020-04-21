@@ -47,20 +47,26 @@ def computeFail(pattern):
 	
 def mainKMP(args):
 	args[0] = str(input("Nama File: "))
-	args[1] = str(input("Keyword: "))
+	args[1] = str(input("Keyword: ")).lower()
 	waktuArtikel = getWaktuArtikel(args[0])
 	File = open(args[0], "r")
 	text = File.read()
-	posn = kmpMatch(args[0], args[1])
-	if (posn == - 1):
+	low = text.lower()
+	posn = kmpMatch(low, args[1])
+	if (posn == -1):
 		print("Keyword not found")
 	else:
 		#print("Pattern starts at posn " + str(posn))
 		kalimat = kalimatRegex(text, args[1], args[0])
-		waktuRegex(kalimat, waktuArtikel)
+		span = searchSpanPattern(kalimat, args[1])
+		waktu = waktuRegex(kalimat, waktuArtikel)
+		jumlah = jumlahRegex(kalimat, args[1], span)
+		for i in range(len(kalimat)):
+			print(kalimat[i])
+			print(waktu[i])
+			print(jumlah[i])
 
 def bmMatch(text, pattern):
-	last = []
 	last = buildLast(pattern)
 	n = len(text)
 	m = len(pattern)
@@ -97,29 +103,50 @@ def buildLast(pattern):
 		
 def mainBM(args):
 	args[0] = str(input("Nama File: "))
-	args[1] = str(input("Keyword: "))
+	args[1] = str(input("Keyword: ")).lower()
 	waktuArtikel = getWaktuArtikel(args[0])
 	File = open(args[0], "r")
 	text = File.read()
-	posn = bmMatch(text, args[1])
+	low = text.lower()
+	posn = bmMatch(low, args[1])
 	if (posn == -1):
 		print("Keyword not found")
 	else:
 		#print("Pattern starts at posn " + str(posn))
 		kalimat = kalimatRegex(text, args[1], args[0])
-		waktuRegex(kalimat, waktuArtikel)
-		jumlahRegex(kalimat)
+		span = searchSpanPattern(kalimat, args[1])
+		waktu = waktuRegex(kalimat, waktuArtikel)
+		jumlah = jumlahRegex(kalimat, args[1], span)
+		for i in range(len(kalimat)):
+			print(kalimat[i])
+			print(waktu[i])
+			print(jumlah[i])
 
-def jumlahRegex(kal):
+def jumlahRegex(kal, pattern, span):
 	x = len(kal)
+	jumlah = [0 for x in range(x)]
 	for i in range(x):
-		jumlah_regex = re.compile(r'[\d] Orang', re.I)
-		jumlahnya = jumlah_regex.findall(kal[i])
-		print(jumlahnya)
-		#if (len(jumlahnya) == 1):
-		#	jumlah[i] = jumlahnya[0]
-		#	print(jumlah[i])
-		#else:
+		jumlahnya = []
+		jumlah_regex = re.compile(r'(?:^|(?<=\s).)(\d+(\.\d{3})?)(?=\s)', re.I)
+		jumlahnya = jumlah_regex.search(kal[i])
+		if (jumlahnya != None):
+			min = span[i] - jumlahnya.span()[1]
+			temp = jumlahnya.group()
+			for match in jumlah_regex.finditer(kal[i]):
+				if(min >= (span[i] - match.span()[1])):
+					min = span[i] - match.span()[1]
+					temp = match
+			jumlah[i] = temp.group()
+	return jumlah
+
+def searchSpanPattern(kalimat, pattern):
+	pat = re.compile(r'(' + pattern + r')', re.I)
+	spanPat = []
+	for i in range(len(kalimat)):
+		posn = pat.search(kalimat[i])
+		for match in pat.finditer(kalimat[i]):
+			spanPat.append(match.span()[1])
+	return spanPat
 			
 def waktuRegex(kal, waktuArtikel):
 	x = len(kal)
@@ -131,14 +158,12 @@ def waktuRegex(kal, waktuArtikel):
 		waktunya = waktu_regex.search(kal[i])
 		if (waktunya == None):
 			waktu[i] = waktuArtikel
-			#print(waktu[i])
 		else:
 			waktu[i] = waktunya.group()
-			#print(waktu[i])
 	return waktu
 					
 def kalimatRegex(text, pattern, filename):
-	kalimat_regex = re.compile(r'(?:^|[\.\n] )(.*?' + pattern + r'.*?)(?=[\.\n])', re.I)
+	kalimat_regex = re.compile(r'(?:^|[\.\n])(.*?' + pattern + r'.*?)(?=\. |\n)', re.I)
 	kal = kalimat_regex.findall(text)
 	#print(kal[0] + '.' + " (" + str(filename) + ")")
 	#print(kal[1] + '.' + " (" + str(filename) + ")")
@@ -148,7 +173,7 @@ def getWaktuArtikel(filename):
 	File = open(filename, "r")
 	ketemu = False
 	while (ketemu == False):
-		waktu_artikel = re.compile(r'((Senin|Selasa|Rabu|Kamis|Jumat|Sabtu|Minggu).*\d\d[\.\:]\d\d WIB|WITA|WIT)', re.I)
+		waktu_artikel = re.compile(r'((Senin|Selasa|Rabu|Kamis|Jumat|Sabtu|Minggu).*\d\d[\..\:]\d\d WIB|WITA|WIT)', re.I)
 		text = File.readlines()
 		for line in text:
 			waktu = waktu_artikel.search(line)
