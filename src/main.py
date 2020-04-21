@@ -106,6 +106,8 @@ def mainBM(args):
 		kalimat = kalimatRegex(text, args[1], args[0])
 		jumlahRegex(text, kal)
 
+#cobacoba
+
 #def jumlahRegex(text, kal):
 #	x = len(kal)
 #	for i in range(x):
