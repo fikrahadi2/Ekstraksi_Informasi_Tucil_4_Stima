@@ -110,6 +110,7 @@ def mainBM(args):
 #cobalagi
 #cobaah
 #coba dulu
+#coba beb
 
 #def jumlahRegex(text, kal):
 #	x = len(kal)
