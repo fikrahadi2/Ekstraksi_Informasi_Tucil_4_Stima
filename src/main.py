@@ -48,6 +48,7 @@ def computeFail(pattern):
 def mainKMP(args):
 	args[0] = str(input("Nama File: "))
 	args[1] = str(input("Keyword: "))
+	waktuArtikel = getWaktuArtikel(args[0])
 	File = open(args[0], "r")
 	text = File.read()
 	posn = kmpMatch(args[0], args[1])
@@ -55,7 +56,8 @@ def mainKMP(args):
 		print("Keyword not found")
 	else:
 		#print("Pattern starts at posn " + str(posn))
-		kal = kalimatRegex(text, args[1], args[0])
+		kalimat = kalimatRegex(text, args[1], args[0])
+		waktuRegex(kalimat, waktuArtikel)
 
 def bmMatch(text, pattern):
 	last = []
@@ -96,6 +98,7 @@ def buildLast(pattern):
 def mainBM(args):
 	args[0] = str(input("Nama File: "))
 	args[1] = str(input("Keyword: "))
+	waktuArtikel = getWaktuArtikel(args[0])
 	File = open(args[0], "r")
 	text = File.read()
 	posn = bmMatch(text, args[1])
@@ -104,24 +107,35 @@ def mainBM(args):
 	else:
 		#print("Pattern starts at posn " + str(posn))
 		kalimat = kalimatRegex(text, args[1], args[0])
-		jumlahRegex(text, kal)
+		waktuRegex(kalimat, waktuArtikel)
+		jumlahRegex(kalimat)
 
-#cobacoba
-#cobalagi
-#cobaah
-#coba dulu
-#coba beb
-#coba lagi ah
-
-#def jumlahRegex(text, kal):
-#	x = len(kal)
-#	for i in range(x):
-#		jumlah_regex = re.compile(r'
-
-#def waktuRegex(text, kal):
-#	x = len(kal)
-#	for i in range(x):
-#		waktu_regex = re.compile(r'
+def jumlahRegex(kal):
+	x = len(kal)
+	for i in range(x):
+		jumlah_regex = re.compile(r'[\d] Orang', re.I)
+		jumlahnya = jumlah_regex.findall(kal[i])
+		print(jumlahnya)
+		#if (len(jumlahnya) == 1):
+		#	jumlah[i] = jumlahnya[0]
+		#	print(jumlah[i])
+		#else:
+			
+def waktuRegex(kal, waktuArtikel):
+	x = len(kal)
+	waktu = [0 for waktu in range(x)]
+	for i in range(x):
+		#Asumsi waktu/tanggalnya sesuai seperti contoh text
+		#dimana ada 'Hari' lalu tanggal bebas, lalu ada "Jam" + WIB/WITA/WIT (asumsi juga waktu di Indonesia)
+		waktu_regex = re.compile(r'((Senin|Selasa|Rabu|Kamis|Jumat|Sabtu|Minggu).*\d\d\.\d\d WIB|WITA|WIT)', re.I)
+		waktunya = waktu_regex.search(kal[i])
+		if (waktunya == None):
+			waktu[i] = waktuArtikel
+			#print(waktu[i])
+		else:
+			waktu[i] = waktunya.group()
+			#print(waktu[i])
+	return waktu
 					
 def kalimatRegex(text, pattern, filename):
 	kalimat_regex = re.compile(r'(?:^|[\.\n] )(.*?' + pattern + r'.*?)(?=[\.\n])', re.I)
@@ -130,6 +144,18 @@ def kalimatRegex(text, pattern, filename):
 	#print(kal[1] + '.' + " (" + str(filename) + ")")
 	return kal
 	
+def getWaktuArtikel(filename):
+	File = open(filename, "r")
+	ketemu = False
+	while (ketemu == False):
+		waktu_artikel = re.compile(r'((Senin|Selasa|Rabu|Kamis|Jumat|Sabtu|Minggu).*\d\d[\.\:]\d\d WIB|WITA|WIT)', re.I)
+		text = File.readlines()
+		for line in text:
+			waktu = waktu_artikel.search(line)
+			if (waktu != None):
+				ketemu = True
+				return waktu.group()
+				
 #Main Program
 args = [0 for args in range(2)]
 #mainKMP(args)
