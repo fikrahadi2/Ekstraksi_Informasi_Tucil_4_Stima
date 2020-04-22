@@ -18,9 +18,6 @@ def openFile(filename):
 
 @app.route('/')
 def index():
-    files = [f for f in listdir(upDir) if isfile(join(upDir, f))]
-    for f in files:
-        os.remove(upDir+'/'+f)
     return render_template('index.html')
  
 @app.route('/upload', methods=['POST'])

@@ -1,21 +1,60 @@
-{% extends 'base.html' %}
-
-{% block hthree %}
-<h3 class="text-muted">"Ekstraksi Informasi Artikel"</h3>
-{% endblock %}
-
-
-{% block hasil %} 
-        <p style="margin-top: 10px; margin-bottom: 10px;"><strong>Keyword</strong> : {{send[1]}}</p>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <style>
+  
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h3 class="text-muted"><center>"Ekstraksi Informasi Artikel"</center></h3>
+      </div>
+      <hr/>
+      <div>
+        
+      <ul class="aturposisi">
+        
+      </ul>
+      </div>
+      
+      
+      <form method="POST" action="hasil">
+        <span><center>Metode: </center></span>
+        <div>
+          <center><input type="radio" name="inlineRadioOptions" id="inlineRadio1" value="opsi1">
+          <label for="inlineRadio1"><span class="naikindikit">Knuth-Morris-Pratt(KMP)</span>   </label></center>
+        </div>
+        <div>
+          <center><input type="radio" name="inlineRadioOptions" id="inlineRadio2" value="opsi2">
+          <label for="inlineRadio2"><span class="naikindikit">Boyer-Moore(BM)</span>  </label></center>
+        </div>
+        <div>
+          <center><input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="opsi3">
+          <label for="inlineRadio2"><span class="naikindikit">Regular Expression(Regex)</span>  </label></center>
+        </div>
+        <center><input name="pattern" placeholder="Masukan Keyword dan Tekan Enter"></center>
+      </form>
+      
+      
+      </div>
+      
+      <div>
+        <p><strong>Keyword</strong> : {{send[1]}}</p>
         <br>
-        <p class="justifi">Catatan: Jika ingin mengupload file kembali, silahkan kembali kehalaman upload file </p> 
-      {% for el in send[0]: %}
-        <div class="infos">
+        <p>Catatan: Jika ingin mengupload file kembali, silahkan kembali kehalaman upload file </p> 
         <p><strong>Hasil Ekstrasi Informasi: </strong></p>
-        <p><strong>Jumlah </strong>: {{el['jumlah']}}</p>
-        <p><strong>Waktu </strong>: {{el['waktu']}}</p>
+      {% for article in send[0]: %}
+        <div>
+        <p><strong>Jumlah </strong>: {{article['jumlah']}}</p>
+        <p><strong>Waktu </strong>: {{article['waktu']}}</p>
         <p><strong>Kalimat </strong>: </p>
-        <p>{{el['kalimat']+' ('+el['filename']+')'}}</p>
+        <p>{{article['kalimat']+' ('+article['filename']+')'}}</p>
         </div>
       {% endfor %}
-{% endblock %}
+        <hr/>   
+        <p><a href="{{ url_for('perihal') }}">Perihal</a></p>
+      </div>
+    </div>
+  </body>
+</html>

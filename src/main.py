@@ -48,7 +48,7 @@ def computeFail(pattern):
 	return fail
 	
 def mainKMP(text, keyword, filename, hasil2):
-	waktuArtikel = getWaktuArtikel(filename)
+	waktuArtikel = getWaktuArtikel(text)
 	low = text.lower()
 	pattern = keyword.lower()
 	posn = kmpMatch(low, pattern)
@@ -103,7 +103,7 @@ def buildLast(pattern):
 	return last
 		
 def mainBM(text, keyword, filename, hasil2):
-	waktuArtikel = getWaktuArtikel(filename)
+	waktuArtikel = getWaktuArtikel(text)
 	low = text.lower()
 	pattern = keyword.lower()
 	posn = bmMatch(low, pattern)
@@ -154,7 +154,7 @@ def waktuRegex(kal, waktuArtikel):
 	for i in range(x):
 		#Asumsi waktu/tanggalnya sesuai seperti contoh text
 		#dimana ada 'Hari' lalu tanggal bebas, lalu ada "Jam" + WIB/WITA/WIT (asumsi juga waktu di Indonesia)
-		waktu_regex = re.compile(r'(Senin|Selasa|Rabu|Kamis|Jumat|Sabtu|Minggu).*?\d\d[\.\:]\d\d WIB|WITA|WIT', re.I)
+		waktu_regex = re.compile(r'((Senin|Selasa|Rabu|Kamis|Jumat|Sabtu|Minggu)?[\,\s]?\(?\d+[\/\-\s](\d+|Januari|Jan|Februari|Feb|Maret|Mar|April|Apr|Mei|Juni|Jun|Juli|Jul|Agustus|Agus|Agu|Ags|September|Sep|Oktober|Okt|November|Nov|Desember|Des)[\/\-\s]\d+\)?([,]?[ ]?Pukul|pukul)?(\s[\d]{1,2}[.:][\d]{2}\sWIB|WITA|WIT?)?)', re.I)
 		waktunya = waktu_regex.search(kal[i])
 		if (waktunya == None):
 			waktu[i] = waktuArtikel
@@ -163,25 +163,17 @@ def waktuRegex(kal, waktuArtikel):
 	return waktu
 					
 def kalimatRegex(text, pattern):
-	kalimat_regex = re.compile(r'(?:^|[\. \n])(.*?' + pattern + r'.*?)(?=\. |\n)', re.I)
+	kalimat_regex = re.compile(r'(?:^|[\.\n]\s)(.*?' + pattern + r'.*?)(?=\.\s|\n)', re.I)
 	kal = kalimat_regex.findall(text)
-	#print(kal)
 	return kal
 	
-def getWaktuArtikel(filename):
-	File = open(filename, "r")
-	ketemu = False
-	while (ketemu == False):
-		waktu_artikel = re.compile(r'((Senin|Selasa|Rabu|Kamis|Jumat|Sabtu|Minggu).*\d\d[\.\:]\d\d WIB|WITA|WIT)', re.I)
-		text = File.readlines()
-		for line in text:
-			waktu = waktu_artikel.search(line)
-			if (waktu != None):
-				ketemu = True
-				return waktu.group()
+def getWaktuArtikel(text):
+	waktu_artikel = re.compile(r'((Senin|Selasa|Rabu|Kamis|Jumat|Sabtu|Minggu)?[\,\s]?\s?\(?\d+[\/\-\s](\d+|Januari|Jan|Februari|Feb|Maret|Mar|April|Apr|Mei|Juni|Jun|Juli|Jul|Agustus|Agus|Agu|Ags|September|Sep|Oktober|Okt|November|Nov|Desember|Des)[\/\-\s]\d+\)?([,]?[ ]?Pukul|pukul)?(\s[\d]{1,2}[.:][\d]{2}\sWIB|WITA|WIT?)?)', re.I)
+	waktu = waktu_artikel.search(text)
+	return waktu.group()
 				
 def mainRegex(text, keyword, filename, hasil2):
-	waktuArtikel = getWaktuArtikel(filename)
+	waktuArtikel = getWaktuArtikel(text)
 	low = text.lower()
 	pattern = keyword.lower()
 	posn = searchSpanPattern(low, pattern)
@@ -220,14 +212,3 @@ def openApp(upDir, pattern, opsi):
 		elif (opsi == "opsi3"):
 			mainRegex(text, pattern, filename, hasil)
 	return hasil
-				
-#Main Program
-#args = [0 for args in range(2)]
-#a = str(input("Nama File: "))
-#b = str(input("Keyword: "))
-#c = open(a, "r")
-#d = c.read()
-#hasil = []
-#mainKMP(d, b, a, hasil)
-#mainBM(args)
-#mainRegex()
