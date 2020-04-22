@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <style>
+      p {
+        margin: 0;
+      }
+
+      .infos {
+        margin-top: 15px;
+        margin-bottom: 15px;
+      }
+
+      .enlayn {
+        display: inline-block; 
+        float: left;
+      } 
+
+      .notebel {
+        font-weight: normal;
+        margin-bottom: 0px;
+        padding-bottom: 5px;
+      }
+
+      .naikindikit {
+        position: relative;
+        bottom: 2px;
+      }
+
+      .geser {
+        padding-right: 11px;
+      }
+
+      .aturposisi {
+        position: relative;
+        left: -19px;
+        padding-bottom: 0px;
+      }
+
+    .benerinmargin {
+      margin-bottom: 8px;
+    }
+
+      
+
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        {% block hthree %} {% endblock %} 
+      </div>
+      <hr/>
+      <div>
+        {% block pe %} {% endblock %}
+      <ul class="aturposisi">
+        {% block link %} {% endblock %} 
+      </ul>
+      </div>
+      
+      
+      <form method="POST" action="hasil">
+        <span class="enlayn geser">Metode: </span>
+        <div class="enlayn geser form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="opsi1">
+          <label class="form-check-label notebel" for="inlineRadio1"><span class="naikindikit">Knuth-Morris-Pratt(KMP)</span>   </label>
+        </div>
+        <div class="enlayn geser form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="opsi2">
+          <label class="form-check-label notebel" for="inlineRadio2"><span class="naikindikit">Boyer-Moore(BM)</span>  </label>
+        </div>
+        <div class="enlayn geser form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="opsi3">
+          <label class="form-check-label notebel" for="inlineRadio2"><span class="naikindikit">Regular Expression(Regex)</span>  </label>
+        </div>
+        <input class="enlayn form-control" name="pattern" placeholder="Masukan Keyword dan Tekan Enter">
+        <!-- <input type="submit"> -->
+      </form>
+      
+      
+      </div>
+      
+      <div class="container">
+        {% block hasil %} {% endblock %}
+        <hr class="benerinmargin"/>   
+        <p><a href="{{ url_for('perihal') }}">Perihal</a></p>
+      </div>
+    </div>
+  </body>
+</html>

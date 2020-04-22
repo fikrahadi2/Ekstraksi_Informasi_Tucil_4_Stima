@@ -1,8 +1,10 @@
 # Nama	: Fikra Hadi Ramadhan
 # NIM	: 13518036
-# Hal   : Tugas Kecil 4 - Strategi Algoritma "15-Puzzle"
+# Hal   : Tugas Kecil 4 - Strategi Algoritma
 # Judul	: Ekstraksi Informasi dari Artikel Berita dengan Algoritma Pencocokan String
 import re
+from os import listdir
+from os.path import isfile, join
 
 def kmpMatch(text, pattern):
 	n = len(text)
@@ -45,26 +47,25 @@ def computeFail(pattern):
 	
 	return fail
 	
-def mainKMP(args):
-	args[0] = str(input("Nama File: "))
-	args[1] = str(input("Keyword: ")).lower()
-	waktuArtikel = getWaktuArtikel(args[0])
-	File = open(args[0], "r")
-	text = File.read()
+def mainKMP(text, keyword, filename, hasil2):
+	waktuArtikel = getWaktuArtikel(filename)
 	low = text.lower()
-	posn = kmpMatch(low, args[1])
+	pattern = keyword.lower()
+	posn = kmpMatch(low, pattern)
 	if (posn == -1):
 		print("Keyword not found")
 	else:
-		#print("Pattern starts at posn " + str(posn))
-		kalimat = kalimatRegex(text, args[1], args[0])
-		span = searchSpanPattern(kalimat, args[1])
+		kalimat = kalimatRegex(text, keyword)
+		span = searchSpanPattern(kalimat, keyword)
 		waktu = waktuRegex(kalimat, waktuArtikel)
-		jumlah = jumlahRegex(kalimat, args[1], span)
+		jumlah = jumlahRegex(kalimat, keyword, span)
 		for i in range(len(kalimat)):
-			print(kalimat[i])
-			print(waktu[i])
-			print(jumlah[i])
+			data = {}
+			data['jumlah'] = jumlah[i]
+			data['waktu'] = waktu[i]
+			data['kalimat'] = kalimat[i]
+			data['filename'] = filename
+			hasil2.append(data)
 
 def bmMatch(text, pattern):
 	last = buildLast(pattern)
@@ -101,33 +102,32 @@ def buildLast(pattern):
 	
 	return last
 		
-def mainBM(args):
-	args[0] = str(input("Nama File: "))
-	args[1] = str(input("Keyword: ")).lower()
-	waktuArtikel = getWaktuArtikel(args[0])
-	File = open(args[0], "r")
-	text = File.read()
+def mainBM(text, keyword, filename, hasil2):
+	waktuArtikel = getWaktuArtikel(filename)
 	low = text.lower()
-	posn = bmMatch(low, args[1])
+	pattern = keyword.lower()
+	posn = bmMatch(low, pattern)
 	if (posn == -1):
 		print("Keyword not found")
 	else:
-		#print("Pattern starts at posn " + str(posn))
-		kalimat = kalimatRegex(text, args[1], args[0])
-		span = searchSpanPattern(kalimat, args[1])
+		kalimat = kalimatRegex(text, keyword)
+		span = searchSpanPattern(kalimat, keyword)
 		waktu = waktuRegex(kalimat, waktuArtikel)
-		jumlah = jumlahRegex(kalimat, args[1], span)
+		jumlah = jumlahRegex(kalimat, keyword, span)
 		for i in range(len(kalimat)):
-			print(kalimat[i])
-			print(waktu[i])
-			print(jumlah[i])
+			data = {}
+			data['jumlah'] = jumlah[i]
+			data['waktu'] = waktu[i]
+			data['kalimat'] = kalimat[i]
+			data['filename'] = filename
+			hasil2.append(data)
 
 def jumlahRegex(kal, pattern, span):
 	x = len(kal)
 	jumlah = [0 for x in range(x)]
 	for i in range(x):
 		jumlahnya = []
-		jumlah_regex = re.compile(r'(?:^|(?<=\s).)(\d+(\.\d{3})?)(?=\s)', re.I)
+		jumlah_regex = re.compile(r'(?:^|(?<=\s| ))(\d+(\.\d{3})?)(?=\s)', re.I)
 		jumlahnya = jumlah_regex.search(kal[i])
 		if (jumlahnya != None):
 			min = span[i] - jumlahnya.span()[1]
@@ -154,7 +154,7 @@ def waktuRegex(kal, waktuArtikel):
 	for i in range(x):
 		#Asumsi waktu/tanggalnya sesuai seperti contoh text
 		#dimana ada 'Hari' lalu tanggal bebas, lalu ada "Jam" + WIB/WITA/WIT (asumsi juga waktu di Indonesia)
-		waktu_regex = re.compile(r'((Senin|Selasa|Rabu|Kamis|Jumat|Sabtu|Minggu).*\d\d\.\d\d WIB|WITA|WIT)', re.I)
+		waktu_regex = re.compile(r'(Senin|Selasa|Rabu|Kamis|Jumat|Sabtu|Minggu).*?\d\d[\.\:]\d\d WIB|WITA|WIT', re.I)
 		waktunya = waktu_regex.search(kal[i])
 		if (waktunya == None):
 			waktu[i] = waktuArtikel
@@ -162,18 +162,17 @@ def waktuRegex(kal, waktuArtikel):
 			waktu[i] = waktunya.group()
 	return waktu
 					
-def kalimatRegex(text, pattern, filename):
-	kalimat_regex = re.compile(r'(?:^|[\.\n])(.*?' + pattern + r'.*?)(?=\. |\n)', re.I)
+def kalimatRegex(text, pattern):
+	kalimat_regex = re.compile(r'(?:^|[\. \n])(.*?' + pattern + r'.*?)(?=\. |\n)', re.I)
 	kal = kalimat_regex.findall(text)
-	#print(kal[0] + '.' + " (" + str(filename) + ")")
-	#print(kal[1] + '.' + " (" + str(filename) + ")")
+	#print(kal)
 	return kal
 	
 def getWaktuArtikel(filename):
 	File = open(filename, "r")
 	ketemu = False
 	while (ketemu == False):
-		waktu_artikel = re.compile(r'((Senin|Selasa|Rabu|Kamis|Jumat|Sabtu|Minggu).*\d\d[\..\:]\d\d WIB|WITA|WIT)', re.I)
+		waktu_artikel = re.compile(r'((Senin|Selasa|Rabu|Kamis|Jumat|Sabtu|Minggu).*\d\d[\.\:]\d\d WIB|WITA|WIT)', re.I)
 		text = File.readlines()
 		for line in text:
 			waktu = waktu_artikel.search(line)
@@ -181,7 +180,54 @@ def getWaktuArtikel(filename):
 				ketemu = True
 				return waktu.group()
 				
+def mainRegex(text, keyword, filename, hasil2):
+	waktuArtikel = getWaktuArtikel(filename)
+	low = text.lower()
+	pattern = keyword.lower()
+	posn = searchSpanPattern(low, pattern)
+	if (len(posn) < 0):
+		print("Keyword not found")
+	else:
+		kalimat = kalimatRegex(text, keyword)
+		span = searchSpanPattern(kalimat, keyword)
+		waktu = waktuRegex(kalimat, waktuArtikel)
+		jumlah = jumlahRegex(kalimat, keyword, span)
+		for i in range(len(kalimat)):
+			data = {}
+			data['jumlah'] = jumlah[i]
+			data['waktu'] = waktu[i]
+			data['kalimat'] = kalimat[i]
+			data['filename'] = filename
+			hasil2.append(data)
+
+def openApp(upDir, pattern, opsi):
+	files = [f for f in listdir(upDir) if isfile(join(upDir, f))]
+	artikel = []
+	for op in files:
+		upPath = upDir + '/' + op
+		f = open(upPath, "r")
+		artikel_2 = f.read()
+		artikel.append({"artikel": artikel_2, "filename": op})
+		
+	hasil = []
+	for berita in artikel:
+		text = berita["artikel"]
+		filename = berita["filename"]
+		if (opsi == "opsi1"):
+			mainKMP(text, pattern, filename, hasil)
+		elif (opsi == "opsi2"):
+			mainBM(text, pattern, filename, hasil)
+		elif (opsi == "opsi3"):
+			mainRegex(text, pattern, filename, hasil)
+	return hasil
+				
 #Main Program
-args = [0 for args in range(2)]
-#mainKMP(args)
-mainBM(args)
+#args = [0 for args in range(2)]
+#a = str(input("Nama File: "))
+#b = str(input("Keyword: "))
+#c = open(a, "r")
+#d = c.read()
+#hasil = []
+#mainKMP(d, b, a, hasil)
+#mainBM(args)
+#mainRegex()

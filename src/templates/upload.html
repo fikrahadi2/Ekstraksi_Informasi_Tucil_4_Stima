@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h3 class="text-muted">"Ekstraksi Informasi Artikel"</h3>
+      </div>
+      <hr/>
+      <div class="header">
+        <h3 class="text-muted">File Berhasil di Upload</h3>
+      </div>
+      <form method="POST" action="hasil">
+        <span>Metode: </span>
+        <div>
+          <input type="radio" name="inlineRadioOptions" id="inlineRadio1" value="opsi1">
+          <label for="inlineRadio1"><span>Knuth-Morris-Pratt(KMP)</span>   </label>
+        </div>
+        <div>
+          <input type="radio" name="inlineRadioOptions" id="inlineRadio2" value="opsi2">
+          <label for="inlineRadio2"><span>Boyer-Moore(BM)</span>  </label>
+        </div>
+        <div>
+          <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="opsi3">
+          <label for="inlineRadio2"><span>Regular Expression(Regex)</span>  </label>
+        </div>
+        <input name="pattern" placeholder="Masukan Keyword dan Tekan Enter">
+        <!-- <input type="submit"> -->
+      </form>
+      <hr/>    
+      </div>
+    </div>
+  </body>
+</html>
